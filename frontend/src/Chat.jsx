@@ -8,6 +8,7 @@ function Chat({roomID,userID}) {
     useEffect(()=>{
       socketRef.current = io("http://localhost:3000");
         socketRef.current.on("connect",()=>{
+            console.log("i have sent the connection request with the follwing roomid"+roomID)
             //console.log("the client is connected with socket id"+socketRef.current.id)
             socketRef.current.emit("conMessage",{"message":"new message","roomId":roomID})
             //console.log("i have send the message")
@@ -30,21 +31,71 @@ function Chat({roomID,userID}) {
       useEffect(()=>console.log("this is from chats state"+chats),[chats])
 
   return (
-    <div>
-      <div className="chatBox" style={{"display":"flex","flexDirection":"column"}} >
-            {chats.map((val,ind,array)=>{
-              if(val.sender=="self"){
-                return(<p style={{"display":"flex","justifyContent":'flex-end'}}>{val.text}</p>)
-              }
-              else{
-                return(<p style={{"display":"flex","justifyContent":'flex-start'}}>{val.text}</p>)
-              }
-
-            })}
+    <div className="chatContainer" style={{
+      display: "flex",
+      flexDirection: "column",
+      height: "30rem",
+      border: "2px solid #ccc",
+      borderRadius: "10px",
+      overflow: "hidden",
+      backgroundColor: "#f9f9f9",
+      padding: "10px"
+    }}>
+      <div className="chatBox" style={{
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "flex-start",
+        height: "25rem",
+        overflowY: "auto",
+        padding: "10px"
+      }}>
+        {chats.map((val, ind) => (
+          <p key={ind} style={{
+            maxWidth: "60%",
+            padding: "10px",
+            margin: "5px",
+            borderRadius: "15px",
+            backgroundColor: val.sender === "self" ? "#0084ff" : "#e0e0e0",
+            color: val.sender === "self" ? "white" : "black",
+            alignSelf: val.sender === "self" ? "flex-end" : "flex-start",
+            textAlign: val.sender === "self" ? "right" : "left"
+          }}>
+            {val.text}
+          </p>
+        ))}
       </div>
-      <input type="text" onChange={(event)=>setMessage(event.target.value)} placeholder='please enter your message'/ >
-      <button onClick={sendMessage}>send message</button>
+    
+      <div className="textAndButton" style={{
+        display: "flex",
+        alignItems: "center",
+        padding: "10px",
+        borderTop: "1px solid #ccc",
+        backgroundColor: "white"
+      }}>
+        <input type="text" style={{
+          flex: "1",
+          padding: "10px",
+          border: "1px solid #ccc",
+          borderRadius: "20px",
+          outline: "none"
+        }} 
+        onChange={(event) => setMessage(event.target.value)}
+        placeholder="Type a message..." />
+    
+        <button onClick={sendMessage} style={{
+          marginLeft: "10px",
+          padding: "10px 15px",
+          border: "none",
+          borderRadius: "20px",
+          backgroundColor: "#0084ff",
+          color: "white",
+          cursor: "pointer"
+        }}>
+          Send
+        </button>
+      </div>
     </div>
+    
   )
 }
 
