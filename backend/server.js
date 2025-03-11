@@ -10,7 +10,7 @@ const http=require("http")
 connectDB();
 const app = express();
 // create and http server
-const PORT = 3000;
+const PORT = process.env.PORT || 5000;
 const httpServer= http.createServer(app);
 httpServer.listen(PORT,()=>{
     console.log("server to socket is connected")
