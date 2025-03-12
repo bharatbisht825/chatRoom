@@ -29,7 +29,7 @@ function Login() {
             },
             body:JSON.stringify(body)
         }
-        const result= await fetch("http://localhost:3000/joinRoom",payload)
+        const result= await fetch("https://chatroom-samd.onrender.com/joinRoom",payload)
         const output=await result.json()
         if(output.message=="Verified"){
             setAuthenticated(true)

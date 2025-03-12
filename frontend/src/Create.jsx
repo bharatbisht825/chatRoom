@@ -18,7 +18,7 @@ async function createRoom(){
         },
         body:JSON.stringify(body)
     }
-    const fetchedData=await fetch("http://localhost:3000/createRoom",payload)
+    const fetchedData=await fetch("https://chatroom-samd.onrender.com/createRoom",payload)
     const data=await fetchedData.json()
     if(data.key && data.users){
         setKey(data.key)
@@ -48,7 +48,7 @@ async function createRoom(){
             "body":JSON.stringify(body)
 
         }
-        const verificationStatus=await fetch("http://localhost:3000/emailData",payload)
+        const verificationStatus=await fetch("https://chatroom-samd.onrender.com/emailData",payload)
         const isSent=await verificationStatus.json()
         return isSent.response.split(" ")[2]
         

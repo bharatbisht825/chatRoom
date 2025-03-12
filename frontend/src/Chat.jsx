@@ -5,7 +5,7 @@ function Chat({roomID,userID}) {
     const [chats,setChats]=useState([])
     const socketRef= useRef(null);
     useEffect(()=>{
-      socketRef.current = io("http://localhost:3000");
+      socketRef.current = io("https://chatroom-samd.onrender.com");
         socketRef.current.on("connect",()=>{
             console.log("i have sent the connection request with the follwing roomid"+roomID)
             //console.log("the client is connected with socket id"+socketRef.current.id)
