@@ -4,22 +4,28 @@ function Chat({roomID,userID}) {
     const [message,setMessage]=useState("")
     const [chats,setChats]=useState([])
     const socketRef= useRef(null);
-    useEffect(()=>{
+    useEffect(() => {
+      if (!roomID) {
+        console.log("roomID is not available yet. Waiting...");
+        return; // Don't run until roomID is available
+      }
+    
       socketRef.current = io("https://chatroom-samd.onrender.com");
-        socketRef.current.on("connect",()=>{
-            console.log("i have sent the connection request with the follwing roomid"+roomID)
-            //console.log("the client is connected with socket id"+socketRef.current.id)
-            socketRef.current.emit("conMessage",{"message":"new message","roomId":roomID})
-            //console.log("i have send the message")
-        })
-        socketRef.current.on("message",(message)=>{
-          
-          setChats((prevState)=>[...prevState,{"sender":"other","text":message.message}])
-        })  
-        return ()=>{
-          socketRef.current.disconnect()
-        }
-    },[])
+    
+      socketRef.current.on("connect", () => {
+        console.log("Connected. Sending roomId:", roomID);
+        socketRef.current.emit("conMessage", { "message": "new message", "roomId": roomID });
+      });
+    
+      socketRef.current.on("message", (message) => {
+        setChats((prevState) => [...prevState, { "sender": "other", "text": message.message }]);
+      });
+    
+      return () => {
+        socketRef.current.disconnect();
+      };
+    }, [roomID]); // Add roomID as a dependency
+    
         //  connect to the websocket
       function sendMessage(){
           if(socketRef.current.connected){
