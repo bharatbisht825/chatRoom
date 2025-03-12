@@ -28,6 +28,7 @@ const userToRoom=new Map()
     
 // Start the server
 socketio.on("connection", (socket) => {
+    console.log("new client is connected "+socketio.id)
     socket.emit("message","this is from socket.emit")
     socket.on("conMessage",({message,roomId})=>{
         console.log(roomId)
