@@ -47,19 +47,17 @@ socketio.on("connection", (socket) => {
     })
     // logic if the socket disconnects
     socket.on("disconnect",()=>{
-        console.log("this socket is disconnected"+socket.id);
-        const rId=userToRoom.get(socket.id.toString());
-        roomToUser.set(rId.toString(),
-            roomToUser.get(rId.toString()).filter((value,index,array)=>{
-                if(value!=socket.id){
-                    return true
-                }
-                else{
-                    return false
-                }
-            })
-        )
-        //console.log(roomToUser.get(rId.toString()))
+        console.log("this socket is disconnected " + socket.id);
+    
+        const rId = userToRoom.get(socket.id); // No need for `.toString()` yet
+        if (!rId) {
+            console.log(`No room found for socket ${socket.id}`);
+            return; // Stop execution if rId is null or undefined
+        }
+
+        roomToUser.set(rId.toString(), roomToUser.get(rId.toString())?.filter(value => value !== socket.id) || []);
+        
+        userToRoom.delete(socket.id);
         
     })
     
