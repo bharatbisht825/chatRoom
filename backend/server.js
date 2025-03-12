@@ -17,7 +17,7 @@ httpServer.listen(PORT,()=>{
 })
 const socketio=new Server(httpServer,{
     cors:{
-        origin:"http://localhost:5173",
+        origin:"https://chat-m5a80kffr-bharats-projects-d3c8235b.vercel.app",
     }
 }
 )
