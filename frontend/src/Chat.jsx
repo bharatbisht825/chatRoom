@@ -1,8 +1,10 @@
 import React, { useEffect, useRef, useState } from 'react'
+import addImage from "./add-image.png"
 import {io} from "socket.io-client"
-function Chat({roomID,userID}) {
+function Chat({roomID,userID,isPremium}) {
     const [message,setMessage]=useState("")
     const [chats,setChats]=useState([])
+    const [file,setFile]=useState("")
     const socketRef= useRef(null);
     useEffect(() => {
       if (!roomID) {
@@ -10,7 +12,7 @@ function Chat({roomID,userID}) {
         return; // Don't run until roomID is available
       }
     
-      socketRef.current = io("https://chatroom-samd.onrender.com");
+      socketRef.current = io("http://localhost:3000");
     
       socketRef.current.on("connect", () => {
         console.log("Connected. Sending roomId:", roomID);
@@ -18,8 +20,13 @@ function Chat({roomID,userID}) {
       });
     
       socketRef.current.on("message", (message) => {
-        setChats((prevState) => [...prevState, { "sender": "other", "text": message.message }]);
+        setChats((prevState) => [...prevState, { "sender": "other", "text": message.message ,"type":message.type}]);
       });
+
+      socketRef.current.on("sendImage",(message)=>{
+        console.log("image is recieved")
+        setChats((prevState) => [...prevState, { "sender": "other", "text": message.message ,"type":message.type}]);
+      })
     
       return () => {
         socketRef.current.disconnect();
@@ -27,14 +34,34 @@ function Chat({roomID,userID}) {
     }, [roomID]); // Add roomID as a dependency
     
         //  connect to the websocket
-      function sendMessage(){
+      function sendMessage(event){
+        if(file==""){
+          console.log("sending normal message")
           if(socketRef.current.connected){
+            if(message!=""){
             socketRef.current.emit("message",{"message":message,"roomId":roomID})
-            setChats((prevState)=>[...prevState,{"sender":"self","text":message}])
+            
+            setChats((prevState)=>[...prevState,{"sender":"self","text":message,"type":"text"}])
+            setMessage("")
+            }
           }
+        }
+        else{
+          // first create a file reader object
+          console.log("sending image")
+          const fileReader=new FileReader()
+          fileReader.onload=(event)=>{
+            const base64Encode=event.target.result;
+            socketRef.current.emit("sendImage",{"message":base64Encode,"roomId":roomID})
+            setChats((prevState)=>[...prevState,{"sender":"self","text":base64Encode,"type":"image"}])
+            setFile("")
+          };
+          fileReader.readAsDataURL(file)
+        }
+
       }
       useEffect(()=>console.log("this is from chats state"+chats),[chats])
-
+      
   return (
     <div className="chatContainer" style={{
       display: "flex",
@@ -54,7 +81,10 @@ function Chat({roomID,userID}) {
         overflowY: "auto",
         padding: "10px"
       }}>
-        {chats.map((val, ind) => (
+        {chats.map((val, ind) => {
+          if(val.type=="text")
+
+         { return(
           <p key={ind} style={{
             maxWidth: "60%",
             padding: "10px",
@@ -67,7 +97,13 @@ function Chat({roomID,userID}) {
           }}>
             {val.text}
           </p>
-        ))}
+        )}
+        else if(val.type=="image"){
+          return (<img src={val.text} alt="Received" style={{ maxWidth: "100px",maxHeight:"100px" ,alignSelf: val.sender === "self" ? "flex-end" : "flex-start" }} />)
+        }
+      }
+        
+        )}
       </div>
     
       <div className="textAndButton" style={{
@@ -77,17 +113,34 @@ function Chat({roomID,userID}) {
         borderTop: "1px solid #ccc",
         backgroundColor: "white"
       }}>
+      
         <input type="text" style={{
           flex: "1",
           padding: "10px",
           border: "1px solid #ccc",
           borderRadius: "20px",
           outline: "none"
+  
+        }}
+        onKeyDown={(e)=>{
+          if (e.key === "Enter"){
+            sendMessage();}
+        
         }} 
         onChange={(event) => setMessage(event.target.value)}
+        value={message}
         placeholder="Type a message..." />
+        {isPremium && <div>
+          <label htmlFor='input-file'>
+            <img src={addImage} style={{maxWidth:"26px",marginTop:"7px",marginLeft:"7px"}}></img>
+          </label>
+          <input type="file" id="input-file" style={{display:"none"}} onChange={(e)=>setFile(e.target.files[0])}></input>
+        </div>}
+      </div>
     
-        <button onClick={sendMessage} style={{
+        <button onClick={
+          sendMessage
+        } style={{
           marginLeft: "10px",
           padding: "10px 15px",
           border: "none",
@@ -98,7 +151,6 @@ function Chat({roomID,userID}) {
         }}>
           Send
         </button>
-      </div>
     </div>
     
   )

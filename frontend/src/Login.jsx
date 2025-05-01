@@ -15,6 +15,7 @@ import Chat from './Chat'
 function Login() {
     const [userId,setUserId]=useState()
     const [roomId,setRoomId]=useState() 
+    const [premiumStatus,setPremiumStatus]=useState(false)
 
     const [authenticated,setAuthenticated]=useState(false);
     async function authenticate(){
@@ -29,8 +30,9 @@ function Login() {
             },
             body:JSON.stringify(body)
         }
-        const result= await fetch("https://chatroom-samd.onrender.com/joinRoom",payload)
+        const result= await fetch("http://localhost:3000/joinRoom",payload)
         const output=await result.json()
+        setPremiumStatus(output.isPremium)
         if(output.message=="Verified"){
             setAuthenticated(true)
         }
@@ -40,7 +42,7 @@ function Login() {
 
     
     if(authenticated){
-        return(<Chat roomID={roomId} userID={userId}></Chat>)
+        return(<Chat roomID={roomId} userID={userId} isPremium={premiumStatus}></Chat>)
     }
     else{
   return (
@@ -54,7 +56,7 @@ function Login() {
       }}>
         <h2 style={{ marginBottom: "10px", color: "#333" }}>Join a Room</h2>
       
-        <input type="text" placeholder="Enter the room ID" 
+        <input type="number" placeholder="Enter the room ID" 
           onChange={(event) => setRoomId(event.target.value)}
           style={{
             width: "250px",
@@ -64,7 +66,7 @@ function Login() {
             outline: "none"
           }} />
       
-        <input type="text" placeholder="Enter your user key"
+        <input type="number" placeholder="Enter your user key"
           onChange={(event) => setUserId(event.target.value)}
           style={{
             width: "250px",

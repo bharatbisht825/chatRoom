@@ -7,8 +7,12 @@ async function  joinRoom(req,res) {
     const dbFetch= await room.findOne({key});
     if(dbFetch.users.includes(userId)){
         res.json({
-            "message":"Verified"
+            message:"Verified",
+            isPremium:dbFetch.premium
         })
+    }
+    if(dbFetch.premium){
+        console.log("a premium room is opened"+dbFetch);
     }
     console.log(key)
     console.log(dbFetch)

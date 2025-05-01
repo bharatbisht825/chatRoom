@@ -7,9 +7,11 @@ const [email,setEmail]=useState("")
 const [key,setKey]=useState("")
 const [sentStatus,setSentStatus]=useState(false)
 const [user,setUser]=useState(null)
+const [err,showErr]=useState(false)
 async function createRoom(){
     const body={
-        "member":member
+        "member":member,
+        "email":email
     }
     const payload={
         method:"POST",
@@ -18,9 +20,13 @@ async function createRoom(){
         },
         body:JSON.stringify(body)
     }
-    const fetchedData=await fetch("https://chatroom-samd.onrender.com/createRoom",payload)
+    const fetchedData=await fetch("http://localhost:3000/createRoom",payload)
     const data=await fetchedData.json()
-    if(data.key && data.users){
+    console.log(data)
+    if(data.err=="Not Premium"){
+      showErr(true)
+    }
+    else {if(data.key && data.users && data.err!="Not Premium"){
         setKey(data.key)
         setUser(data.users)
         const sentStatus=await emailData(email,data.key,data.users);
@@ -28,11 +34,13 @@ async function createRoom(){
         if(sentStatus=="OK"){
                 setSentStatus(true)
         }
+        
     }
+}
 
+    // this fuction is used to send created users to email
     async function emailData(email,key,user) {
-        // fetch request to email authentication fucntion in backend
-
+        
         const body={
             "email":email,
             "key":key,
@@ -48,7 +56,7 @@ async function createRoom(){
             "body":JSON.stringify(body)
 
         }
-        const verificationStatus=await fetch("https://chatroom-samd.onrender.com/emailData",payload)
+        const verificationStatus=await fetch("http://localhost:3000/emailData",payload)
         const isSent=await verificationStatus.json()
         return isSent.response.split(" ")[2]
         
@@ -68,7 +76,8 @@ async function createRoom(){
       }}>
         <h2 style={{ color: "#333", marginBottom: "10px" }}>Create a Room</h2>
       
-        <input type="text" placeholder="Enter number of people to add"
+        <input type="number" placeholder="Enter number of people to add"
+          required={true}
           onChange={(event) => setMember(event.target.value)}
           style={{
             width: "300px",
@@ -78,7 +87,7 @@ async function createRoom(){
             outline: "none"
           }} />
       
-        <input type="text" placeholder="Enter your email"
+        <input type="email" placeholder="Enter your email"
           required={true}
           onChange={(event) => setEmail(event.target.value)}
           style={{
@@ -104,31 +113,38 @@ async function createRoom(){
           Create Room
         </button>
       
-        <div className="room_user" style={{
-          width: "300px",
-          height: "150px",
-          overflowY: "auto",
-          padding: "10px",
-          borderRadius: "8px",
-          marginTop: "10px"
-        }}>
-          <p style={{ fontWeight: "bold", color: "#ff4d4d" }}>{key}</p>
-          {user && user.map((val, ind) => (
-            <p key={ind} style={{
-              backgroundColor: "white",
-              padding: "5px",
-              borderRadius: "5px",
-              marginBottom: "5px"
-            }}>{val}</p>
-          ))}
-        </div>
       
         {sentStatus && <p style={{
           fontWeight: "bold",
           marginTop: "10px"
         }}>
           The users have been sent to email successfully
+          <Link to="/" style={{
+                    marginTop: "10px",
+                    textDecoration: "none",
+                    color: "#0084ff",
+                    fontWeight: "bold"
+                  }}>
+                    Login
+                               </Link>
         </p>}
+
+        {err && <p style={{
+          fontWeight: "bold",
+          marginTop: "10px"
+        }}>
+          The user is not premium you cannot create more than 5 users.
+          <Link to="/payment" style={{
+                    marginTop: "10px",
+                    textDecoration: "none",
+                    color: "#0084ff",
+                    fontWeight: "bold"
+                  }}>
+                    Get Premium
+                               </Link>
+        </p>}
+
+
       </div>
       
   )

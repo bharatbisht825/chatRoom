@@ -7,6 +7,10 @@ const roomSchema=mongoose.Schema({
     users:{
         type:Array,
         required:[true,"Please enter the users"]
+    },
+    premium:{
+        type:Boolean,
+        default:false,
     }
 })
 

@@ -2,8 +2,11 @@ const express = require("express");
 const cors=require("cors")
 const connectDB=require("./connectDB");
 const createRoom=require("./control/createRoom");
+const premiumUser=require("./model/premiumUser")
 const joinRoom=require("./control/joinRoom");
 const emailData=require('./control/emailData')
+const createOrder=require('./control/createOrder');
+const verifyPayments=require('./control/verifyPayment')
 require("dotenv").config();
 const {Server}=require("socket.io")
 const http=require("http")
@@ -17,7 +20,7 @@ httpServer.listen(PORT,()=>{
 })
 const socketio=new Server(httpServer,{
     cors:{
-        origin:"https://chat-8zuspg4ib-bharats-projects-d3c8235b.vercel.app",
+        origin:"http://localhost:5173",
         methods: ["GET", "POST"]
     }
 }
@@ -67,8 +70,15 @@ socketio.on("connection", (socket) => {
     
     socket.on("message",({message,roomId})=>{
         roomToUser.get(roomId.toString()).forEach(clientSocket => {
-            socket.to(clientSocket).emit("message",{"message":message})
+            socket.to(clientSocket).emit("message",{"message":message,"type":"text"})
             console.log("i have  emmited the following message "+message+" to ssocket "+clientSocket+ " the socket i am connectwith is "+socket.id)
+        });
+    })
+    
+    socket.on("sendImage",({message,roomId})=>{
+        roomToUser.get(roomId.toString()).forEach(clientSocket => {
+            socket.to(clientSocket).emit("sendImage",{"message":message,"type":"image"})
+            console.log("i have  emmited an image message to ssocket "+clientSocket+ " the socket i am connectwith is "+socket.id)
         });
     })
 })
@@ -82,3 +92,5 @@ app.use(express.json());
 app.post("/createRoom",createRoom)
 app.post("/joinRoom",joinRoom)
 app.post("/emailData",emailData)
+app.post("/createOrder",createOrder)
+app.post("/verifyPayments",verifyPayments)
