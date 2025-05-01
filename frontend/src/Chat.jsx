@@ -12,7 +12,7 @@ function Chat({roomID,userID,isPremium}) {
         return; // Don't run until roomID is available
       }
     
-      socketRef.current = io("http://localhost:3000");
+      socketRef.current = io("https://chatroom-samd.onrender.com/");
     
       socketRef.current.on("connect", () => {
         console.log("Connected. Sending roomId:", roomID);

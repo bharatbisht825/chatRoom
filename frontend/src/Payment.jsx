@@ -25,7 +25,7 @@ function Payment() {
   
     }  
   
-    const orderRequest=await fetch("http://localhost:3000/createOrder",orderPayload)
+    const orderRequest=await fetch("https://chatroom-samd.onrender.com/createOrder",orderPayload)
     const response=await orderRequest.json();
     const orderId=response.id
     console.log(response)
@@ -55,7 +55,7 @@ function Payment() {
                      
                     }
 
-                    const validateSignature=await fetch("http://localhost:3000/verifyPayments",signaturePayload)
+                    const validateSignature=await fetch("https://chatroom-samd.onrender.com/verifyPayments",signaturePayload)
                     const parsedValue=await validateSignature.json()
                     console.log(parsedValue)
                 },
