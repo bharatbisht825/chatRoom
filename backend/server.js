@@ -21,9 +21,6 @@ httpServer.listen(PORT,()=>{
 const socketio=new Server(httpServer)
 app.use(cors({
   origin: 'https://chat-room-one-iota.vercel.app',
-  methods: ['GET', 'POST', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
-  credentials: true // if you use credentials (cookies, auth)
 }));
 
 const roomToUser= new Map()
