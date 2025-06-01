@@ -18,14 +18,13 @@ const httpServer= http.createServer(app);
 httpServer.listen(PORT,()=>{
     console.log("server to socket is connected")
 })
-app.use(cors());
-const socketio=new Server(httpServer,{
-    cors:{
-        origin:"https://chat-room-one-iota.vercel.app",
-    }
-}
-)
-
+const socketio=new Server(httpServer)
+app.use(cors({
+  origin: 'https://chat-room-one-iota.vercel.app',
+  methods: ['GET', 'POST', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  credentials: true // if you use credentials (cookies, auth)
+}));
 
 const roomToUser= new Map()
 const userToRoom=new Map()
