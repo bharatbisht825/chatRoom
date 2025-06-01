@@ -18,10 +18,10 @@ const httpServer= http.createServer(app);
 httpServer.listen(PORT,()=>{
     console.log("server to socket is connected")
 })
+app.use(cors());
 const socketio=new Server(httpServer,{
     cors:{
-        origin:"https://chat-room-one-iota.vercel.app/",
-        methods: ["GET", "POST"]
+        origin:"https://chat-room-one-iota.vercel.app",
     }
 }
 )
@@ -87,7 +87,6 @@ socketio.on("connection", (socket) => {
 // run express server
 
 
-app.use(cors());
 app.use(express.json());
 app.post("/createRoom",createRoom)
 app.post("/joinRoom",joinRoom)
