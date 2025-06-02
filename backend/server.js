@@ -15,6 +15,10 @@ const app = express();
 // create and http server
 const PORT = process.env.PORT || 5000;
 const httpServer= http.createServer(app);
+app.use(cors({
+  origin: "https://chat-room-one-iota.vercel.app",
+  credentials: true
+}));
 httpServer.listen(PORT,()=>{
     console.log("server to socket is connected")
 })
