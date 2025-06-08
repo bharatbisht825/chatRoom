@@ -2,6 +2,8 @@ import React, { useEffect, useRef, useState } from 'react'
 import addImage from "./add-image.png"
 import {io} from "socket.io-client"
 function Chat({roomID,userID,isPremium}) {
+  const API_BASE_URL = import.meta.env.VITE_BACKEND_URL;
+
     const [message,setMessage]=useState("")
     const [chats,setChats]=useState([])
     const [file,setFile]=useState("")
@@ -12,7 +14,7 @@ function Chat({roomID,userID,isPremium}) {
         return; // Don't run until roomID is available
       }
     
-      socketRef.current = io("https://chatroom-samd.onrender.com/");
+      socketRef.current = io(API_BASE_URL);
     
       socketRef.current.on("connect", () => {
         console.log("Connected. Sending roomId:", roomID);

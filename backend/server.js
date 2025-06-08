@@ -7,16 +7,29 @@ const joinRoom=require("./control/joinRoom");
 const emailData=require('./control/emailData')
 const createOrder=require('./control/createOrder');
 const verifyPayments=require('./control/verifyPayment')
-require("dotenv").config();
+const dotenv=require("dotenv")
 const {Server}=require("socket.io")
 const http=require("http")
+const fs = require('fs');
+const env = process.env.NODE_ENV || 'development';
+const envPath = `.env.${env}`;
+
+if (fs.existsSync(envPath)) {
+  dotenv.config({ path: envPath });
+  console.log(`Loaded ${envPath}`);
+} else {
+  dotenv.config(); // fallback to .env
+  console.log('Loaded default .env');
+}
+console.log('Running in mode:', process.env.MODE);
+console.log('API URL is:', process.env.ORIGIN);
 connectDB();
 const app = express();
 // create and http server
 const PORT = process.env.PORT || 5000;
 const httpServer= http.createServer(app);
 app.use(cors({
-  origin: "https://chat-room-one-iota.vercel.app",
+  origin: process.env.ORIGIN,
   credentials: true
 }));
 httpServer.listen(PORT,()=>{
@@ -24,7 +37,7 @@ httpServer.listen(PORT,()=>{
 })
 const socketio= require("socket.io")(httpServer, {
   cors: {
-    origin: "https://chat-room-one-iota.vercel.app",
+    origin: process.env.ORIGIN,
     methods: ["GET", "POST"]
   }
 });

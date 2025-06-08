@@ -13,6 +13,8 @@ import {Link} from 'react-router-dom'
 import Chat from './Chat'
 
 function Login() {
+  const API_BASE_URL = import.meta.env.VITE_BACKEND_URL;
+
     const [userId,setUserId]=useState()
     const [roomId,setRoomId]=useState() 
     const [premiumStatus,setPremiumStatus]=useState(false)
@@ -30,7 +32,7 @@ function Login() {
             },
             body:JSON.stringify(body)
         }
-        const result= await fetch("https://chatroom-samd.onrender.com/joinRoom",payload)
+        const result= await fetch(`${API_BASE_URL}/joinRoom`,payload)
         const output=await result.json()
         setPremiumStatus(output.isPremium)
         if(output.message=="Verified"){
@@ -98,6 +100,14 @@ function Login() {
           fontWeight: "bold"
         }}>
           Create Room
+        </Link>
+        <Link to="/payment" style={{
+          marginTop: "10px",
+          textDecoration: "none",
+          color: "#0084ff",
+          fontWeight: "bold"
+        }}>
+          Buy Premium
         </Link>
       </div>
       

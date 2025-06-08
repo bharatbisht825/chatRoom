@@ -2,6 +2,8 @@ import React, { use, useState } from 'react'
 import {Link} from "react-router-dom";
 
 function Create() {
+  const API_BASE_URL = import.meta.env.VITE_BACKEND_URL;
+
 const [member,setMember]=useState(0)
 const [email,setEmail]=useState("")
 const [key,setKey]=useState("")
@@ -20,7 +22,7 @@ async function createRoom(){
         },
         body:JSON.stringify(body)
     }
-    const fetchedData=await fetch("https://chatroom-samd.onrender.com/createRoom",payload)
+    const fetchedData=await fetch(`${API_BASE_URL}/createRoom`,payload)
     const data=await fetchedData.json()
     console.log(data)
     if(data.err=="Not Premium"){
@@ -56,7 +58,7 @@ async function createRoom(){
             "body":JSON.stringify(body)
 
         }
-        const verificationStatus=await fetch("https://chatroom-samd.onrender.com/emailData",payload)
+        const verificationStatus=await fetch(`${API_BASE_URL}/emailData`,payload)
         const isSent=await verificationStatus.json()
         return isSent.response.split(" ")[2]
         

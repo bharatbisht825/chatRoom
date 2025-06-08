@@ -1,6 +1,8 @@
 import React, { useState,useEffect } from 'react'
 
 function Payment() {
+  const API_BASE_URL = import.meta.env.VITE_BACKEND_URL;
+
   // first create an order
   const amount=10
   const [email,setEmail]=useState("")
@@ -25,7 +27,7 @@ function Payment() {
   
     }  
   
-    const orderRequest=await fetch("https://chatroom-samd.onrender.com/createOrder",orderPayload)
+    const orderRequest=await fetch(`${API_BASE_URL}/createOrder`,orderPayload)
     const response=await orderRequest.json();
     const orderId=response.id
     console.log(response)
@@ -55,7 +57,7 @@ function Payment() {
                      
                     }
 
-                    const validateSignature=await fetch("https://chatroom-samd.onrender.com/verifyPayments",signaturePayload)
+                    const validateSignature=await fetch(`${API_BASE_URL}/verifyPayments`,signaturePayload)
                     const parsedValue=await validateSignature.json()
                     console.log(parsedValue)
                 },

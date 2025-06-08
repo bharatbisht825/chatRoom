@@ -12,7 +12,7 @@ async function emailData(req,res) {
             secure: true,
             auth: {
                 user: "videochatcompany@gmail.com",
-                pass: "bvdgrsegpnumzivj",
+                pass: "oadskhsnvfkobbyz",
             },
         });
 
